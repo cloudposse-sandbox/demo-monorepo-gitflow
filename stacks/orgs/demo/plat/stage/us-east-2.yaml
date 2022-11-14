@@ -1,0 +1,15 @@
+import:
+  - mixins/region/us-east-2
+  - orgs/demo/plat/stage/_defaults
+
+components:
+  terraform:
+    dynamodb:
+      vars:
+        db_name: stagedb
+    s3bucket:
+      vars:
+        bucket_name: stagebucket
+    sqsQueue:
+      vars:
+        queue_name: stagequeue

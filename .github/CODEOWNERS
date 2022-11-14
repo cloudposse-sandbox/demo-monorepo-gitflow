@@ -1,0 +1,23 @@
+# Use this file to define individuals or teams that are responsible for code in a repository.
+# Read more: <https://help.github.com/articles/about-codeowners/>
+#
+# Order is important: the last matching pattern has the highest precedence
+
+# These owners will be the default owners for everything
+*                                   @cloudposse-sandbox/team-1
+
+# Team 1 must review any changes to GitHub actions
+.github/*                           @cloudposse-sandbox/team-1
+
+
+# Team 2 is default owner for terraform components, except for dynamodb, which is Team 3
+components/terraform/*              @cloudposse-sandbox/team-2
+components/terraform/dynamodb/*     @cloudposse-sandbox/team-3
+
+# Team 2 owns all pre-prod stacks, Team 3 owns prod
+stacks/orgs/demo/*                  @cloudposse-sandbox/team-2
+stacks/orgs/demo/plat/prod/*        @cloudposse-sandbox/team-3
+
+# Admins must review all changes to CODEOWNERS or the mergify configuration
+.github/mergify.yml                 @cloudposse-sandbox/org-admins
+.github/CODEOWNERS                  @cloudposse-sandbox/org-admins

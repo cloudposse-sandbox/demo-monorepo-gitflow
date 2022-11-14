@@ -1,0 +1,70 @@
+name: GitHub Atmos Demo
+run-name: A demo action for atmos workflows 👽
+on:
+  pull_request:
+jobs:
+  demo-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            dynamodb:
+              - 'components/terraform/dynamodb/**'
+            s3bucket:
+              - 'components/terraform/s3bucket/**'
+            sqsQueue:
+              - 'components/terraform/sqsQueue/**'
+            devStack:
+              - 'stacks/orgs/demo/plat/dev/**'
+            prodStack:
+              - 'stacks/orgs/demo/plat/prod/**'
+            stageStack:
+              - 'stacks/orgs/demo/plat/stage/**'
+
+      - name: terraform linting tasks
+        if: steps.changes.outputs.dynamodb == 'true'
+        run: echo "running terraform linting task"
+
+      - name: detect changes in components and stacks
+        if: steps.changes.outputs.dynamodb == 'true'
+        run: echo "atmos detected change in dynamodb component. running terraform plan for affected stacks."
+
+      - name: plan plat-ue2-dev-dynamodb
+        if: steps.changes.outputs.dynamodb == 'true' || steps.changes.outputs.devStack == 'true'
+        run: |
+          echo "atmos terraform plan dynamodb -s plat-ue2-dev"
+          sleep 4
+          echo "Plan: 1 to add, 0 to change, 0 to destroy."
+          echo "storing plan for component dynamodb, stack demo-plat-ue2-dev in artifacts repository"
+      - name: Create comment
+        if: steps.changes.outputs.dynamodb == 'true' || steps.changes.outputs.devStack == 'true'
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Atmos detected changes. Running terraform plan for affected stacks:
+
+            - plat-ue2-dev-dynamodb
+
+            `Plan: 1 to add, 0 to change, 0 to destroy.`
+
+      - name: add label
+        if: steps.changes.outputs.dynamodb == 'true' || steps.changes.outputs.devStack == 'true'
+        uses: lightspeedretail/actions-label-prs@v1
+        with:
+          task: "label_pr_add"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADD_LABEL: "has-changes"
+      - name: add label
+        if: steps.changes.outputs.dynamodb == 'true' || steps.changes.outputs.devStack == 'true'
+        uses: lightspeedretail/actions-label-prs@v1
+        with:
+          task: "label_pr_add"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADD_LABEL: "afftected-stack-plat-ue2-dev-dynamodb"

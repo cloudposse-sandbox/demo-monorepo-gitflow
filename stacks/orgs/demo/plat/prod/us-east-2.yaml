@@ -1,0 +1,15 @@
+import:
+  - mixins/region/us-east-2
+  - orgs/demo/plat/prod/_defaults
+
+components:
+  terraform:
+    dynamodb:
+      vars:
+        db_name: proddb
+    s3bucket:
+      vars:
+        bucket_name: prodbucket
+    sqsQueue:
+      vars:
+        queue_name: prodqueue
