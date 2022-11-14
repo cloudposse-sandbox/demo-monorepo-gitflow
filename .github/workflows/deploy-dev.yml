@@ -1,0 +1,37 @@
+name: GitHub Atmos Deployment Demo
+run-name: A demo deployment action for atmos workflows 👽
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - environment: plat-ue2-dev-dynamodb
+    environment:
+      name: ${{ matrix.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            dynamodb:
+              - 'components/terraform/dynamodb/**'
+            s3bucket:
+              - 'components/terraform/s3bucket/**'
+            sqsQueue:
+              - 'components/terraform/sqsQueue/**'
+            devStack:
+              - 'stacks/orgs/demo/plat/dev/**'
+            prodStack:
+              - 'stacks/orgs/demo/plat/prod/**'
+            stageStack:
+              - 'stacks/orgs/demo/plat/stage/**'
+
+      - run: echo "atmos terraform apply dynamodb -s demo-plat-ue2-dev"

@@ -3,7 +3,7 @@ run-name: A demo deployment action for atmos workflows 👽
 on:
   push:
     branches:
-      - main
+      - stage
   workflow_dispatch:
 jobs:
   deploy:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - environment: plat-ue2-dev-dynamodb
+          - environment: plat-ue2-stage-dynamodb
     environment:
       name: ${{ matrix.environment }}
     steps:
