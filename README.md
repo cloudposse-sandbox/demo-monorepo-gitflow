@@ -1,2 +1,2 @@
-# demo-monorepo
-A demonstration monorepo
+# demo-monorepo-gitflow
+A demonstration monorepo with gitflow enabled
