@@ -7,7 +7,7 @@ components:
     dynamodb:
       vars:
         db_name: devdb
-        test_var: test9
+        test_var: test11
     s3bucket:
       vars:
         bucket_name: devbucket
